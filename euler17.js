@@ -13,27 +13,25 @@
 
 let mag1 = [
             ['','one','two','three','four','five','six','seven','eight','nine'],
-            ['','ten','twenty','thirty','fourty','fifty','sixty','seventy','eighty','ninety'],
+            ['','ten','twenty','thirty','forty','fifty','sixty','seventy','eighty','ninety'],
             ['','one','two','three','four','five','six','seven','eight','nine'],
             ['','one','two','three','four','five','six','seven','eight','nine']
           ]
 
-console.log(ret(1000))
-console.log(ret(1200))
-console.log(ret(1230))
-console.log(ret(1203))
-console.log(ret(1030))
-console.log(ret(1001))
-console.log(ret(1033))
+let count = 0
+for(let i =1; i<=1000; i++){
+    let str = ret(i)
 
-console.log("Hundreds")
-console.log(ret(200))
-console.log(ret(230))
-console.log(ret(233))
-console.log(ret(203))
+
+    //clean string
+    str = cleanString(str)
+    count += countLetterNum(str)
+    console.log(str)
+}
+console.log("count = "+count)
 
 function ret(x){
-  let res = ""
+  let res = []
   let index = 0
   let strX = x+""
 
@@ -41,8 +39,16 @@ function ret(x){
   let preThous = "thousand"
   let and = "and"
   let pre =""
+
   for (let i = strX.length-1 ; i>=0; i--){
 
+    //Special cases for pre strings (and, hifens, " ", thousand or hundred)
+    if(strX.length==2){
+      //hifend
+      if(i==0 && strX.charAt(i+1)!="0" && strX.charAt(i)!="0"){
+        pre = "-"
+      }
+    }
     if (strX.length==3){
         if(i==0){
           if(strX.charAt(i+1) == "0" && strX.charAt(i+2)=="0"){
@@ -84,19 +90,34 @@ function ret(x){
     }
 
     let num = parseInt(strX.charAt(i))
-    res = mag1[index][num]+pre + res
+
+    //Add the number and the pre string to the array
+    res.push(mag1[index][num]+pre)
+
     pre = ""
     index++
   }
+  // if isSpecial != null replace las two element of array with the res
+  let isSpecial = specialCase(strX)
+  if(isSpecial!=null){
+    //remove last two from res
+    res = res.splice(2)
+    //add y
+    res.unshift(y)
+  }
 
-  return res
+  //unwrapp array and create a result string
+  let result=""
+  for(let i=res.length-1; i>=0 ; i--){
+    result += res[i]
+  }
+
+  return result
 }
 
-
-
-//Fucntion to evaluate special cases: eleven, twelve, thirteem ----nineteen
+//Fucntion to evaluate special cases of strings and returns: eleven, twelve, thirteem ----nineteen
 function specialCase(str){
-  let res
+  let res = null
   let lastNums
 
   if (str.length>=2){
@@ -104,7 +125,7 @@ function specialCase(str){
   } else{
     lastNums = null
   }
-  console.log("ln = "+lastNums)
+  // console.log("ln = "+lastNums)
   switch(lastNums){
     case "11":
     res = "eleven"; break;
@@ -124,7 +145,7 @@ function specialCase(str){
     res = "eighteen"; break;
     case "19":
     res = "nineteen"; break;
-    default: console.log("Nothing")
+    default: break;
   }
 
   return res
@@ -148,7 +169,3 @@ function cleanString(str){
   let newString = str.replace(exp,"")
   return newString
 }
-
-//Decompose the number into magnitutes 1, 10, 100, 1000
-
-//assign strings from these magnitues
